@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>HealthNavigator - Дашборд</title>
+        <!-- Tailwind CSS для быстрого прототипирования UI -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Chart.js для графиков -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Phosphor Icons для красивых иконок -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    </head>
+    <body
+        class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col"
+    >
+        <!-- Навигация -->
+        <nav
+            class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-lg border-b border-indigo-900"
+        >
+            <div
+                class="container mx-auto px-6 py-4 flex justify-between items-center"
+            >
+                <div class="flex items-center space-x-2">
+                    <i class="ph-fill ph-activity text-3xl text-blue-300"></i>
+                    <h1 class="text-2xl font-bold tracking-tight">
+                        HealthNavigator
+                    </h1>
+                </div>
+                <div
+                    class="flex items-center space-x-3 bg-white/10 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-sm"
+                >
+                    <i class="ph-fill ph-user-circle text-xl text-blue-200"></i>
+                    <span class="text-sm font-medium">Пациент: TestUser</span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto px-6 py-8 flex-grow">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Левая колонка: Метрики и Рекомендации -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Блок метрик -->
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+                    >
+                        <div
+                            class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex justify-between items-center"
+                        >
+                            <div class="flex items-center space-x-2">
+                                <i
+                                    class="ph-fill ph-watch text-xl text-slate-500"
+                                ></i>
+                                <h2
+                                    class="text-lg font-semibold text-slate-800"
+                                >
+                                    Показатели браслета
+                                </h2>
+                            </div>
+                            <button
+                                id="sync-btn"
+                                class="bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center shadow-sm border border-blue-100 hover:border-blue-600"
+                            >
+                                <i
+                                    class="ph-bold ph-arrows-clockwise text-base mr-2"
+                                ></i>
+                                Синхронизировать
+                            </button>
+                        </div>
+
+                        <div class="p-6">
+                            <!-- Карточки с текущими значениями -->
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
+                            >
+                                <!-- Шаги -->
+                                <div
+                                    class="bg-gradient-to-br from-blue-500 to-blue-600 p-5 rounded-2xl shadow-md text-white relative overflow-hidden"
+                                >
+                                    <i
+                                        class="ph-fill ph-sneaker absolute -right-4 -bottom-4 text-8xl text-white/20 transform -rotate-12"
+                                    ></i>
+                                    <div class="relative z-10">
+                                        <div
+                                            class="flex items-center space-x-2 mb-2"
+                                        >
+                                            <div
+                                                class="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm"
+                                            >
+                                                <i
+                                                    class="ph-bold ph-steps text-white text-xl"
+                                                ></i>
+                                            </div>
+                                            <p
+                                                class="text-blue-100 font-medium"
+                                            >
+                                                Шаги за сегодня
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="flex items-baseline space-x-2"
+                                        >
+                                            <p
+                                                class="text-4xl font-bold tracking-tight"
+                                                id="steps-display"
+                                            >
+                                                {{ steps }}
+                                            </p>
+                                            <p
+                                                class="text-blue-200 text-sm font-medium"
+                                            >
+                                                шагов
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Пульс -->
+                                <div
+                                    class="bg-gradient-to-br from-rose-500 to-red-600 p-5 rounded-2xl shadow-md text-white relative overflow-hidden"
+                                >
+                                    <i
+                                        class="ph-fill ph-heartbeat absolute -right-4 -bottom-4 text-8xl text-white/20"
+                                    ></i>
+                                    <div class="relative z-10">
+                                        <div
+                                            class="flex items-center space-x-2 mb-2"
+                                        >
+                                            <div
+                                                class="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm"
+                                            >
+                                                <i
+                                                    class="ph-bold ph-activity text-white text-xl"
+                                                ></i>
+                                            </div>
+                                            <p
+                                                class="text-rose-100 font-medium"
+                                            >
+                                                Текущий пульс
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="flex items-baseline space-x-2"
+                                        >
+                                            <p
+                                                class="text-4xl font-bold tracking-tight"
+                                                id="hr-display"
+                                            >
+                                                {{ heart_rate }}
+                                            </p>
+                                            <p
+                                                class="text-rose-200 text-sm font-medium"
+                                            >
+                                                уд/мин
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Графики -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div
+                                    class="bg-slate-50 p-4 rounded-xl border border-slate-100"
+                                >
+                                    <p
+                                        class="text-xs text-slate-500 font-semibold mb-3 uppercase tracking-wider flex items-center"
+                                    >
+                                        <i
+                                            class="ph-fill ph-trend-up mr-1.5"
+                                        ></i>
+                                        Активность (неделя)
+                                    </p>
+                                    <div class="h-40 w-full">
+                                        <canvas id="stepsChart"></canvas>
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-slate-50 p-4 rounded-xl border border-slate-100"
+                                >
+                                    <p
+                                        class="text-xs text-slate-500 font-semibold mb-3 uppercase tracking-wider flex items-center"
+                                    >
+                                        <i
+                                            class="ph-fill ph-heart-break mr-1.5"
+                                        ></i>
+                                        Динамика пульса
+                                    </p>
+                                    <div class="h-40 w-full">
+                                        <canvas id="hrChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Блок AI Рекомендаций -->
+                    <div
+                        class="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-2xl shadow-sm p-6 border border-indigo-100/60 relative overflow-hidden"
+                    >
+                        <div
+                            class="absolute top-0 right-0 p-6 opacity-10 pointer-events-none"
+                        >
+                            <i
+                                class="ph-fill ph-sparkle text-9xl text-indigo-500"
+                            ></i>
+                        </div>
+                        <div class="relative z-10">
+                            <h2
+                                class="text-xl font-bold mb-5 text-indigo-900 flex items-center"
+                            >
+                                <div
+                                    class="bg-indigo-100 p-2 rounded-xl mr-3 text-indigo-600"
+                                >
+                                    <i
+                                        class="ph-fill ph-magic-wand text-xl"
+                                    ></i>
+                                </div>
+                                Умные рекомендации AI
+                            </h2>
+                            <ul class="space-y-3">
+                                {% for rec in recommendations %}
+                                <li
+                                    class="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm text-slate-700 text-sm border-l-4 border-indigo-400 flex items-start"
+                                >
+                                    <i
+                                        class="ph-fill ph-info text-indigo-500 text-lg mr-3 mt-0.5 shrink-0"
+                                    ></i>
+                                    <span class="leading-relaxed"
+                                        >{{ rec }}</span
+                                    >
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка: Дневник -->
+                <div class="space-y-8">
+                    <!-- Форма добавления дневника -->
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+                    >
+                        <div
+                            class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex items-center space-x-2"
+                        >
+                            <i
+                                class="ph-fill ph-notebook text-xl text-slate-500"
+                            ></i>
+                            <h2 class="text-lg font-semibold text-slate-800">
+                                Дневник самочувствия
+                            </h2>
+                        </div>
+                        <div class="p-6">
+                            <form id="diary-form" class="space-y-5">
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 mb-3 flex items-center"
+                                    >
+                                        Оценка состояния
+                                    </label>
+                                    <!-- Стилизованный ползунок -->
+                                    <div
+                                        class="bg-slate-50 p-4 rounded-xl border border-slate-100"
+                                    >
+                                        <input
+                                            type="range"
+                                            id="mood"
+                                            min="1"
+                                            max="5"
+                                            value="3"
+                                            class="w-full accent-blue-600 cursor-pointer"
+                                        />
+                                        <div
+                                            class="flex justify-between text-xl mt-3 px-1"
+                                        >
+                                            <span
+                                                title="Ужасно"
+                                                class="grayscale hover:grayscale-0 transition opacity-60 hover:opacity-100 cursor-pointer"
+                                                >😫</span
+                                            >
+                                            <span
+                                                title="Плохо"
+                                                class="grayscale hover:grayscale-0 transition opacity-60 hover:opacity-100 cursor-pointer"
+                                                >😟</span
+                                            >
+                                            <span
+                                                title="Нормально"
+                                                class="transition cursor-pointer"
+                                                >😐</span
+                                            >
+                                            <span
+                                                title="Хорошо"
+                                                class="grayscale hover:grayscale-0 transition opacity-60 hover:opacity-100 cursor-pointer"
+                                                >🙂</span
+                                            >
+                                            <span
+                                                title="Отлично"
+                                                class="grayscale hover:grayscale-0 transition opacity-60 hover:opacity-100 cursor-pointer"
+                                                >🤩</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 mb-2 flex items-center"
+                                    >
+                                        <i
+                                            class="ph-fill ph-text-aa mr-1.5 text-slate-400"
+                                        ></i>
+                                        Симптомы или заметки
+                                    </label>
+                                    <textarea
+                                        id="symptoms"
+                                        rows="3"
+                                        class="w-full border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-shadow resize-none"
+                                        placeholder="Например: болит голова, спал 5 часов..."
+                                    ></textarea>
+                                </div>
+                                <button
+                                    type="submit"
+                                    class="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition duration-200 shadow-md shadow-blue-600/20 flex items-center justify-center"
+                                >
+                                    <i
+                                        class="ph-bold ph-check-circle mr-2 text-lg"
+                                    ></i>
+                                    Сохранить запись
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- История дневника -->
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+                    >
+                        <div
+                            class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex items-center space-x-2"
+                        >
+                            <i
+                                class="ph-fill ph-clock-counter-clockwise text-xl text-slate-500"
+                            ></i>
+                            <h2 class="text-lg font-semibold text-slate-800">
+                                История записей
+                            </h2>
+                        </div>
+                        <div class="p-6">
+                            <div
+                                class="space-y-4 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar"
+                            >
+                                {% if diary_entries %} {% for entry in
+                                diary_entries %}
+                                <div
+                                    class="border border-slate-100 bg-slate-50/50 rounded-xl p-4 hover:bg-slate-50 transition"
+                                >
+                                    <div
+                                        class="flex justify-between items-center mb-2"
+                                    >
+                                        <div
+                                            class="flex items-center space-x-2"
+                                        >
+                                            <!-- Простая цветовая индикация самочувствия -->
+                                            {% if entry.mood_score >= 4 %}
+                                            <span
+                                                class="flex h-3 w-3 rounded-full bg-green-500"
+                                            ></span>
+                                            {% elif entry.mood_score == 3 %}
+                                            <span
+                                                class="flex h-3 w-3 rounded-full bg-yellow-400"
+                                            ></span>
+                                            {% else %}
+                                            <span
+                                                class="flex h-3 w-3 rounded-full bg-red-500"
+                                            ></span>
+                                            {% endif %}
+                                            <span
+                                                class="text-sm font-bold text-slate-700"
+                                                >{{ entry.mood_score }}/5</span
+                                            >
+                                        </div>
+                                        <span
+                                            class="text-xs font-medium text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-100 flex items-center"
+                                        >
+                                            <i
+                                                class="ph-regular ph-calendar-blank mr-1"
+                                            ></i>
+                                            {{ entry.timestamp.split(' ')[0] }}
+                                        </span>
+                                    </div>
+                                    <p
+                                        class="text-sm text-slate-600 mt-1 pl-5 border-l-2 border-slate-200"
+                                    >
+                                        {{ entry.symptoms_text or 'Без описания'
+                                        }}
+                                    </p>
+                                </div>
+                                {% endfor %} {% else %}
+                                <div class="text-center py-6 text-slate-400">
+                                    <i
+                                        class="ph-fill ph-empty text-4xl mb-2 opacity-50"
+                                    ></i>
+                                    <p class="text-sm">Записей пока нет.</p>
+                                    <p class="text-xs mt-1">
+                                        Отметьте свое самочувствие выше!
+                                    </p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Подвал -->
+        <footer
+            class="bg-slate-100 border-t border-slate-200 mt-8 py-6 text-center text-slate-500 text-sm"
+        >
+            <p>Прототип MVP "HealthNavigator" &copy; 2024</p>
+        </footer>
+
+        <!-- Клиентская логика -->
+        <script>
+            // Общие настройки для графиков Chart.js
+            Chart.defaults.font.family = "'Inter', 'sans-serif'";
+            Chart.defaults.color = "#64748b"; // text-slate-500
+            Chart.defaults.scale.grid.color = "#f1f5f9"; // border-slate-100
+
+            // График Шагов
+            const stepsCtx = document
+                .getElementById("stepsChart")
+                .getContext("2d");
+            new Chart(stepsCtx, {
+                type: "bar", // Изменили тип на столбчатую для разнообразия
+                data: {
+                    labels: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Сегодня"],
+                    datasets: [
+                        {
+                            label: "Шаги (тыс.)",
+                            data: [
+                                4,
+                                6.5,
+                                5,
+                                8.2,
+                                3.5,
+                                10,
+                                parseFloat("{{ steps / 1000 }}") || 0,
+                            ],
+                            backgroundColor: "#3b82f6", // blue-500
+                            borderRadius: 4,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } },
+                },
+            });
+
+            // График Пульса (Новый график)
+            const hrCtx = document.getElementById("hrChart").getContext("2d");
+            new Chart(hrCtx, {
+                type: "line",
+                data: {
+                    labels: [
+                        "08:00",
+                        "10:00",
+                        "12:00",
+                        "14:00",
+                        "16:00",
+                        "18:00",
+                        "Сейчас",
+                    ],
+                    datasets: [
+                        {
+                            label: "Пульс",
+                            data: [
+                                65,
+                                72,
+                                68,
+                                85,
+                                74,
+                                70,
+                                parseFloat("{{ heart_rate }}") || 0,
+                            ],
+                            borderColor: "#f43f5e", // rose-500
+                            backgroundColor: "rgba(244, 63, 94, 0.1)",
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4, // Плавные изгибы
+                            pointBackgroundColor: "#fff",
+                            pointBorderColor: "#f43f5e",
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { suggestedMin: 50, suggestedMax: 120 } },
+                },
+            });
+
+            // Отправка формы дневника
+            document
+                .getElementById("diary-form")
+                .addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const btn = e.target.querySelector("button");
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML =
+                        '<i class="ph-bold ph-spinner animate-spin mr-2 text-lg"></i> Сохранение...';
+                    btn.disabled = true;
+
+                    const mood = document.getElementById("mood").value;
+                    const symptoms = document.getElementById("symptoms").value;
+
+                    try {
+                        const response = await fetch("/api/add_diary", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                mood_score: mood,
+                                symptoms_text: symptoms,
+                            }),
+                        });
+
+                        if (response.ok) {
+                            window.location.reload();
+                        }
+                    } catch (error) {
+                        console.error("Ошибка сохранения дневника", error);
+                        alert("Произошла ошибка при сохранении.");
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    }
+                });
+
+            // Имитация синхронизации устройства
+            document
+                .getElementById("sync-btn")
+                .addEventListener("click", async () => {
+                    const btn = document.getElementById("sync-btn");
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML =
+                        '<i class="ph-bold ph-spinner animate-spin text-base mr-2"></i> Синхронизация...';
+                    btn.disabled = true;
+
+                    try {
+                        const response = await fetch("/api/sync_device", {
+                            method: "POST",
+                        });
+                        if (response.ok) {
+                            window.location.reload();
+                        }
+                    } catch (error) {
+                        console.error("Ошибка синхронизации", error);
+                        alert("Сбой синхронизации с устройством.");
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    }
+                });
+        </script>
+    </body>
+</html>
