@@ -8,6 +8,10 @@ from database import init_db, get_db_connection
 
 app = Flask(__name__)
 
+# Инициализируем БД прямо при создании объекта приложения.
+# Это гарантирует, что БД создастся при запуске WSGI на PythonAnywhere.
+init_db()
+
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -121,6 +125,6 @@ def sync_device():
     })
 
 if __name__ == '__main__':
-    # Инициализация БД перед стартом сервера
-    init_db()
+    # Этот блок сработает только при локальном запуске (python app.py),
+    # на PythonAnywhere он будет проигнорирован.
     app.run(debug=False, host='0.0.0.0', port=5000)

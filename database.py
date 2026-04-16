@@ -1,12 +1,14 @@
 import sqlite3
 import os
 
-DB_PATH = 'health_navigator.db'
+# Получаем абсолютный путь к директории, где находится этот скрипт
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+# Жестко связываем имя файла с этой директорией
+DB_PATH = os.path.join(BASE_DIR, 'health_navigator.db')
 
 def get_db_connection():
     """Создает и возвращает подключение к базе данных SQLite."""
     conn = sqlite3.connect(DB_PATH)
-    # Позволяет обращаться к столбцам по именам (как к словарям)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -15,7 +17,6 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Таблица пользователей
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,7 +25,6 @@ def init_db():
         )
     ''')
 
-    # Таблица дневника самочувствия
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS diary_entries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,7 +36,6 @@ def init_db():
         )
     ''')
 
-    # Таблица объективных метрик (носимые устройства)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS device_metrics (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,11 +47,10 @@ def init_db():
         )
     ''')
 
-    # Создаем тестового пользователя для MVP, если его еще нет
     cursor.execute("SELECT id FROM users WHERE username = 'TestUser'")
     if not cursor.fetchone():
         cursor.execute("INSERT INTO users (username) VALUES ('TestUser')")
 
     conn.commit()
     conn.close()
-    print("База данных успешно инициализирована.")
+    print(f"База данных успешно инициализирована по пути: {DB_PATH}")
